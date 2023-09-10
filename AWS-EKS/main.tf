@@ -1,9 +1,9 @@
 locals {
-  name   = "infraSity"
+  name   = "infrasity"
   region = "us-east-1"
 
   tags = {
-    created_by = "infraSity"
+    created_by = "infrasity"
     terraform = "true"
     environment = "test"
   }
