@@ -44,7 +44,7 @@ jobs:
           sudo apt-get install -y python3-pip
           pip install awscli
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials and deploy
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,9 +52,6 @@ jobs:
           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
-
-      - name: Run kubectl
-        run: |
           aws eks update-kubeconfig --region us-east-1 --name eks-cluster
           kubectl apply -f mkdocs-ns.yml
           kubectl apply -f deployment.yml -n mkdocs
