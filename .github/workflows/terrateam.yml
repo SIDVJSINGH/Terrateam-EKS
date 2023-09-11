@@ -46,20 +46,16 @@ jobs:
 
       - name: Configure AWS credentials
         run: |
-          aws configure set aws_access_key_id ${{ steps.terrateam.outputs.aws-access-key-id }}
-          aws configure set aws_secret_access_key ${{ steps.terrateam.outputs.aws-secret-access-key }}
-          aws configure set default.region ${{ steps.terrateam.outputs.aws-region }}
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
-        env:
-          AWS_ACCESS_KEY_ID: ${{ steps.terrateam.outputs.aws-access-key-id }}
-          AWS_SECRET_ACCESS_KEY: ${{ steps.terrateam.outputs.aws-secret-access-key }}
-          AWS_DEFAULT_REGION: ${{ steps.terrateam.outputs.aws-region }}
 
       - name: Configure kubectl
         run: |
-          aws eks update-kubeconfig --region ${{ steps.terrateam.outputs.aws-region }} --name ${{ steps.terrateam.outputs.cluster-name }}
+          aws eks update-kubeconfig --region us-east-1 --name ${{ steps.terrateam.outputs.cluster-name }}
       - name: Run kubectl
         run: |
           kubectl apply -f mkdocs-ns.yml
