@@ -17,4 +17,4 @@ terraform {
     key    = "EKS/eks.tfstate"
     region = "us-east-1"
   }
-} 
+}
