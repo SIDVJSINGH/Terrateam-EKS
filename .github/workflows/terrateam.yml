@@ -55,7 +55,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          aws eks update-kubeconfig --region us-east-1 --name ${{ steps.terrateam.outputs.cluster-name }}
+          aws eks update-kubeconfig --region us-east-1 --name eks-cluster
       - name: Run kubectl
         run: |
           kubectl apply -f mkdocs-ns.yml
