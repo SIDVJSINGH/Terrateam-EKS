@@ -39,7 +39,10 @@ jobs:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
       - name: AWS CLI setup
-        run: sudo apt-get update && apt-get install -y python3-pip && pip3 install awscli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip install awscli
 
       - name: Configure AWS credentials
         run: |
