@@ -9,16 +9,16 @@
 #
 # See https://terrateam.io/docs/configuration for details
 ##########################################################################
-name: 'Terrateam Workflow'
+name: "Terrateam Workflow"
 on:
   workflow_dispatch:
     inputs:
       # The work-token and api-base-url are automatically passed in by the Terrateam backend
       work-token:
-        description: 'Work Token'
+        description: "Work Token"
         required: true
       api-base-url:
-        description: 'API Base URL'
+        description: "API Base URL"
 jobs:
   terrateam:
     permissions: # Required to pass credentials to the Terrateam action
@@ -33,7 +33,28 @@ jobs:
         id: terrateam
         uses: terrateamio/action@v1 # Do not replace with a custom image. Doing so may cause Terrateam to not operate as intended.
         with:
-          work-token: '${{ github.event.inputs.work-token }}'
-          api-base-url: '${{ github.event.inputs.api-base-url }}'
+          work-token: "${{ github.event.inputs.work-token }}"
+          api-base-url: "${{ github.event.inputs.api-base-url }}"
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
+
+      - name: AWS CLI setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip install awscli
+
+      - name: Configure AWS credentials and deploy
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          mv ./kubectl /usr/local/bin/kubectl
+          aws eks update-kubeconfig --region us-east-1 --name eks-cluster
+          kubectl apply -f mkdocs-ns.yml
+          kubectl apply -f deployment.yml -n mkdocs
+          kubectl apply -f service.yml -n mkdocs
+          sleep 120
+          kubectl get svc -n mkdocs

@@ -8,7 +8,7 @@ locals {
     environment = "test"
   }
 }
-# VPC module
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -27,7 +27,6 @@ module "vpc" {
     Environment = "dev"
   }
 }
-# EKS module
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
   version = "~> 18.0"
@@ -42,9 +41,9 @@ module "eks" {
   subnet_ids = module.vpc.public_subnets
   eks_managed_node_groups = {
     green = {
-      min_size = 3
-      max_size = 4
-      desired_size = 3
+      min_size = 2
+      max_size = 3
+      desired_size = 2
 
       instance_types = ["t3.medium"]
       capacity_type = "SPOT"
@@ -53,7 +52,7 @@ module "eks" {
   manage_aws_auth_configmap = false
 }
 
-# To enable url to open publicly
+
 resource "aws_security_group_rule" "allow_http" {
   type        = "ingress"
   from_port   = 8000
